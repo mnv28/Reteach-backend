@@ -12,6 +12,6 @@ router.post("/login", loginUser);
 //signup route
 router.post("/signup", signUpUser);
 router.get("/students", studentList);
-router.get("/user/:email", findUser);
+router.get("/user/:emailOrPhone", findUser);
 router.delete("/delete-user/:id", deleteUser);
 module.exports = router;

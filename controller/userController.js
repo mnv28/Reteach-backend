@@ -21,7 +21,10 @@ const loginUser = async (req, res) => {
     const name = user.name;
     const avatar = user.avatar;
     const role = user.role;
-    res.status(200).json({ name, avatar, _id, emailOrPhone, token, role });
+    const courses = user.courses;
+    res
+      .status(200)
+      .json({ name, avatar, _id, emailOrPhone, token, role, courses });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -55,14 +58,22 @@ const studentList = async (req, res) => {
 
 const findUser = async (req, res) => {
   try {
-    const { email } = req.params; // Assuming the email is passed as a parameter in the request
+    const { emailOrPhone } = req.params; // Assuming the email is passed as a parameter in the request
 
     // Check if email is provided
-    if (!email) {
-      return res.status(400).send("Email parameter is required");
+    if (!emailOrPhone) {
+      return res.status(400).send("Email or Phone Number is required");
     }
 
-    const user = await userModel.findOne({ email }).select("-password");
+    const isEmail = validator.isEmail(emailOrPhone);
+    const query = isEmail ? { email: emailOrPhone } : { mobile: emailOrPhone };
+
+    // Find the user by email or mobile
+    const user = await userModel.findOne(query).select("-password");
+
+    // if (!user) {
+    //   throw Error("Incorrect Email or Mobile");
+    // }
 
     // Check if the user with the specified email exists
     if (!user) {
